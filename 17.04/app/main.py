@@ -61,22 +61,23 @@ def news_delete(id):
     return redirect('/')
 
 
-# добавляет в столбец бд
-#@app.route('/news_like/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
-#@login_required
-#def news_like(id_news, id_user):
-    #db_sess = db_session.create_session()
-    #user = db_sess.query(User).filter(User.id == id_user).first()
+# добавляет в столбец бд, на самом деле нет(
+@app.route('/news_like/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
+@login_required
+def news_like(id_news, id_user):
+    # print(id_news, id_user)
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id_user).first()
+    if user:
+        print(type(user.liked_news))
+        # return str(user.liked_news)
+        user.liked_news = user.liked_news + ' ' + str(id_news)
+        print('l', user.liked_news)
+        db_sess.commit()
+    else:
+        abort(404)
 
-   # if user:
-       # print(1)
-       # user.liked_news = user.liked_news + ' ' + str(id_news)
-        #print(user.liked_news)
-        #db_sess.commit()
-   # else:
-        #abort(404)
-
-    #return redirect('/')
+    return redirect('/')
 
 
 @app.route('/my_news1', methods=['GET', 'POST'])
@@ -86,16 +87,22 @@ def my_news():
     return render_template("my_news.html", news=news)
 
 
-# не работает
-#@app.route('/news_liked_by/<int:id_user>', methods=['GET', 'POST'])
-#def news_liked_by(id_user):
-    #db_sess = db_session.create_session()
-    #news = db_sess.query(News)
-    #user = db_sess.query(User).filter(User.id == id_user).first()
-    #liked = user.liked_news
-    #print(liked)
-    #liked_list = liked.split()
-    #return render_template("liked_news.html", liked_list=liked_list, news=news)
+# пока возвращает только номер айдишника пользователяж
+# @app.route('/news_liked_by/<int:id_user>', methods=['GET', 'POST'])
+# def news_liked_by(id_user):
+    # return str(id_user)
+
+@app.route('/news_liked_by/<int:id_user>', methods=['GET', 'POST'])
+def news_liked_by(id_user):
+    db_sess = db_session.create_session()
+    news = db_sess.query(News)
+    user = db_sess.query(User).filter(User.id == id_user).first()
+    liked = user.liked_news
+    print(liked)
+    liked_list = liked.split()
+    liked_list = [int(x) for x in liked_list]
+    print(liked_list)
+    return render_template("liked_news.html", liked_list=liked_list, news=news)
 
 
 @app.route('/news/<int:id>', methods=['GET', 'POST'])
@@ -148,7 +155,6 @@ def reqister():
         user = User(
             name=form.name.data,
             email=form.email.data
-            # liked_news=''
         )
         user.set_password(form.password.data)
         db_sess.add(user)
