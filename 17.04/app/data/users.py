@@ -15,6 +15,7 @@ class User(SqlAlchemyBase, UserMixin):
     email = sqlalchemy.Column(sqlalchemy.String, index=True, unique=True, nullable=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
+    # liked_news = sqlalchemy.Column(sqlalchemy.String)
 
     news = orm.relation("News", back_populates='user')
 
