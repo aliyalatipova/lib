@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>понрав</h2>
-     <p>{{liked_list }}</p>
+<a href="/" class="btn btn-secondary">все новости</a>
+
     {% for item in news %}
-     {% if item.id in liked_list %}
-            <p>uuu</p>
+       {% if item.id in liked_list %}
             <div class="col-md6 border rounded">
             <h2>{{ item.title }}</h2>
             <div>
@@ -14,7 +13,7 @@
             <div>
                 Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
             </div>
-     {% endif %}
+      {% endif %}
 
     {% endfor %}
 {% endblock %}
