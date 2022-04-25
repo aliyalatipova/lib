@@ -40,6 +40,7 @@ def add_news():
         news = News()
         news.title = form.title.data
         news.content = form.content.data
+        news.price = form.price.data
         current_user.news.append(news)
         db_sess.merge(current_user)
         db_sess.commit()
@@ -60,14 +61,41 @@ def news_delete(id):
     return redirect('/')
 
 
+# добавляет в столбец бд
+#@app.route('/news_like/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
+#@login_required
+#def news_like(id_news, id_user):
+    #db_sess = db_session.create_session()
+    #user = db_sess.query(User).filter(User.id == id_user).first()
+
+   # if user:
+       # print(1)
+       # user.liked_news = user.liked_news + ' ' + str(id_news)
+        #print(user.liked_news)
+        #db_sess.commit()
+   # else:
+        #abort(404)
+
+    #return redirect('/')
+
+
 @app.route('/my_news1', methods=['GET', 'POST'])
 def my_news():
     db_sess = db_session.create_session()
-    # if current_user.is_authenticated:
-    # news = db_sess.query(News).filter((News.user == current_user))
-    # else:
     news = db_sess.query(News)
     return render_template("my_news.html", news=news)
+
+
+# не работает
+#@app.route('/news_liked_by/<int:id_user>', methods=['GET', 'POST'])
+#def news_liked_by(id_user):
+    #db_sess = db_session.create_session()
+    #news = db_sess.query(News)
+    #user = db_sess.query(User).filter(User.id == id_user).first()
+    #liked = user.liked_news
+    #print(liked)
+    #liked_list = liked.split()
+    #return render_template("liked_news.html", liked_list=liked_list, news=news)
 
 
 @app.route('/news/<int:id>', methods=['GET', 'POST'])
@@ -80,6 +108,7 @@ def edit_news(id):
         if news:
             form.title.data = news.title
             form.content.data = news.content
+            form.price.data = news.price
         else:
             abort(404)
     if form.validate_on_submit():
@@ -118,7 +147,8 @@ def reqister():
                                    message="Такой пользователь уже есть")
         user = User(
             name=form.name.data,
-            email=form.email.data,
+            email=form.email.data
+            # liked_news=''
         )
         user.set_password(form.password.data)
         db_sess.add(user)
