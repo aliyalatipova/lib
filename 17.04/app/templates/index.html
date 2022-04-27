@@ -1,47 +1,47 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Записи в блоге</h1>
-    {% if current_user.is_authenticated %}
-        <a href="news" class="btn btn-secondary">Добавить объявление</a>
-        <a href="my_news1" class="btn btn-secondary">Только мои</a>
-        <a href="news_liked_by/{{ current_user.id }}" class="btn btn-secondary">понравивишиеся мне</a>
-    {% endif %}
-    {% for item in news %}
-<div class="col-md6 border rounded">
-    <h2>{{ item.title }}</h2>
-    <h3>{{ item.price }}</h3>
-    <div>
-        {{ item.content }}
-    </div>
-    <div>
-        Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
-    </div>
-    {% if current_user.is_authenticated and current_user == item.user %}
-    <div>
-        <a href="/news/{{ item.id }}" class="btn btn-warning">Изменить</a>
-        <a href="/news_delete/{{ item.id }}" class="btn btn-danger">Удалить</a>
+<h1>Записи в блоге</h1>
+{% if current_user.is_authenticated %}
+    <a href="news" class="btn btn-secondary">Добавить объявление</a>
+    <a href="my_news1" class="btn btn-secondary">Только мои</a>
+    <a href="news_liked_by/{{ current_user.id }}" class="btn btn-secondary">понравивишиеся мне</a>
+{% endif %}
 
-    </div>
-    {% endif %}
-
-    {% if current_user.is_authenticated and current_user != item.user %}
-        <p>{{ current_user.liked_news.split() }}</p>
-        {% set a = item.id %}
-        {% set b = a | string %}
-
-
-    {% if b in current_user.liked_news.split() %}
-        <p>это нравится</p>
+{% for item in news %}
+    <div class="col-md6 border rounded">
+        <h2>{{ item.title }}</h2>
+        <h3>{{ item.price }}</h3>
         <div>
-            <a href="/dislike/{{ item.id }}/{{ current_user.id }}" class="btn btn-warning">нравится</a>
+            {{ item.content }}
         </div>
-    {% else %}
+
         <div>
-            <a href="/news_like/{{ item.id }}/{{ current_user.id }}" class="btn btn-success">нравится</a>
+            Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
         </div>
-    {% endif %}
+
+        {% if current_user.is_authenticated and current_user == item.user %}
+            <div>
+                <a href="/news/{{ item.id }}" class="btn btn-warning">Изменить</a>
+                <a href="/news_delete/{{ item.id }}" class="btn btn-danger">Удалить</a>
+            </div>
+        {% endif %}
+
+        {% if current_user.is_authenticated and current_user != item.user %}
+            <p>{{ current_user.liked_news.split() }}</p>
+            {% set a = item.id %}
+            {% set b = a | string %}
+            {% if b in current_user.liked_news.split() %}
+                <p>это нравится</p>
+                <div>
+                    <a href="/dislike/{{ item.id }}/{{ current_user.id }}" class="btn btn-warning">убрать из понравившихся</a>
+                </div>
+                {% else %}
+                <div>
+                    <a href="/news_like/{{ item.id }}/{{ current_user.id }}" class="btn btn-success">нравится</a>
+                </div>
+            {% endif %}
+        {% endif %}
     </div>
-    {% endif %}
-    {% endfor %}
+{% endfor %}
 {% endblock %}
