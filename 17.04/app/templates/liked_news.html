@@ -13,8 +13,11 @@
             <div>
                 Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
             </div>
+                <div>
+            <a href="/dislike_from/{{ item.id }}/{{ current_user.id }}" class="btn btn-warning">нравится</a>
+            </div>
                 </div>
-      {% endif %}
+       {% endif %}
 
     {% endfor %}
 {% endblock %}

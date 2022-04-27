@@ -26,22 +26,22 @@
     {% endif %}
 
     {% if current_user.is_authenticated and current_user != item.user %}
-    <p> список {{ current_user.liked_news }}</p>
-    {% set a = item.id %}
-    {% set b = a | string %}
+        <p>{{ current_user.liked_news.split() }}</p>
+        {% set a = item.id %}
+        {% set b = a | string %}
 
-<div class="col-md6 border rounded">
+
     {% if b in current_user.liked_news.split() %}
-    <p>это нравится</p>
-
+        <p>это нравится</p>
+        <div>
+            <a href="/dislike/{{ item.id }}/{{ current_user.id }}" class="btn btn-warning">нравится</a>
+        </div>
+    {% else %}
+        <div>
+            <a href="/news_like/{{ item.id }}/{{ current_user.id }}" class="btn btn-success">нравится</a>
+        </div>
     {% endif %}
-
-    <div>
-        <a href="/news_like/{{ item.id }}/{{ current_user.id }}" class="btn btn-warning">нравится</a>
-
-    </div>
     </div>
     {% endif %}
-</div>
     {% endfor %}
 {% endblock %}

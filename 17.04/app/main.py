@@ -71,11 +71,60 @@ def news_like(id_news, id_user):
     if user:
         print(type(user.liked_news))
         # return str(user.liked_news)
-        user.liked_news = user.liked_news + ' ' + str(id_news)
+        if user.liked_news.split()[-1] != str(id_news):
+            user.liked_news = user.liked_news + ' ' + str(id_news)
         print('l', user.liked_news)
         db_sess.commit()
         user_id = user.id
         return redirect("/")
+    else:
+        abort(404)
+        return redirect("/")
+
+
+# как дизлайкать
+@app.route('/dislike/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
+@login_required
+def dislike(id_news, id_user):
+    # print(id_news, id_user)
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id_user).first()
+    if user:
+        print(type(user.liked_news))
+        # return str(user.liked_news)
+        if str(id_news) in user.liked_news.split():
+            another = list()
+            for new in user.liked_news.split():
+                if new != str(id_news):
+                    another.append(new)
+            user.liked_news = ' '.join(another)
+        print('l', user.liked_news)
+        db_sess.commit()
+        return redirect("/")
+    else:
+        abort(404)
+        return redirect("/")
+
+
+# дизлайкать если человек находился в понравившихся
+@app.route('/dislike_from/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
+@login_required
+def dislike_from(id_news, id_user):
+    # print(id_news, id_user)
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id_user).first()
+    if user:
+        print(type(user.liked_news))
+        # return str(user.liked_news)
+        if str(id_news) in user.liked_news.split():
+            another = list()
+            for new in user.liked_news.split():
+                if new != str(id_news):
+                    another.append(new)
+            user.liked_news = ' '.join(another)
+        print('l', user.liked_news)
+        db_sess.commit()
+        return redirect(f"/news_liked_by/{id_user}")
     else:
         abort(404)
         return redirect("/")
@@ -142,7 +191,7 @@ def index():
     return render_template("index.html", news=news)
 
 
- # чтож будет попытка
+# чтож будет попытка
 # @app.route("/authorized/<int:id_user>", methods=['GET', 'POST'])
 # def authorized(id_user):
     #db_sess = db_session.create_session()
