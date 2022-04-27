@@ -74,10 +74,11 @@ def news_like(id_news, id_user):
         user.liked_news = user.liked_news + ' ' + str(id_news)
         print('l', user.liked_news)
         db_sess.commit()
+        user_id = user.id
+        return redirect("/")
     else:
         abort(404)
-
-    return redirect('/')
+        return redirect("/")
 
 
 @app.route('/my_news1', methods=['GET', 'POST'])
@@ -141,6 +142,20 @@ def index():
     return render_template("index.html", news=news)
 
 
+ # чтож будет попытка
+# @app.route("/authorized/<int:id_user>", methods=['GET', 'POST'])
+# def authorized(id_user):
+    #db_sess = db_session.create_session()
+    #news = db_sess.query(News)
+    #user = db_sess.query(User).filter(User.id == id_user).first()
+    #liked = user.liked_news
+    #print(liked)
+    #liked_list = liked.split()
+    #liked_list = [int(x) for x in liked_list]
+    # print(liked_list)
+    #return render_template("authorized.html", news=news)
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def reqister():
     form = RegisterForm()
@@ -171,6 +186,9 @@ def login():
         user = db_sess.query(User).filter(User.email == form.email.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
+            user_id = user.id
+            print(user_id)
+            # return redirect(f"/authorized/{str(user_id)}")
             return redirect("/")
         return render_template('login.html', message="Неправильный логин или пароль", form=form)
     return render_template('login.html', title='Авторизация', form=form)
