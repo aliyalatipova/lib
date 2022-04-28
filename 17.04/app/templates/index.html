@@ -8,40 +8,50 @@
     <a href="news_liked_by/{{ current_user.id }}" class="btn btn-secondary">понравивишиеся мне</a>
 {% endif %}
 
+
+<br>
+
+<form method="post">
+    <input type="text" name="find1" autocomplete="off" placeholder="Поиск по сайту" required>
+    <input class="btn" type="submit" name="submit" value="искать">
+</form>
+
 {% for item in news %}
-    <div class="col-md6 border rounded">
-        <h2>{{ item.title }}</h2>
-        <h3>{{ item.price }}</h3>
-        <div>
-            {{ item.content }}
-        </div>
-
-        <div>
-            Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
-        </div>
-
-        {% if current_user.is_authenticated and current_user == item.user %}
+    {% if item.id in news_need %}
+        <div class="col-md6 border rounded">
+            <h2>{{ item.title }}</h2>
+            <h3>{{ item.price }}</h3>
             <div>
-                <a href="/news/{{ item.id }}" class="btn btn-warning">Изменить</a>
-                <a href="/news_delete/{{ item.id }}" class="btn btn-danger">Удалить</a>
+                {{ item.content }}
             </div>
-        {% endif %}
 
-        {% if current_user.is_authenticated and current_user != item.user %}
-            <p>{{ current_user.liked_news.split() }}</p>
-            {% set a = item.id %}
-            {% set b = a | string %}
-            {% if b in current_user.liked_news.split() %}
-                <p>это нравится</p>
+            <div>
+                Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
+            </div>
+
+            {% if current_user.is_authenticated and current_user == item.user %}
                 <div>
-                    <a href="/dislike/{{ item.id }}/{{ current_user.id }}" class="btn btn-warning">убрать из понравившихся</a>
-                </div>
-                {% else %}
-                <div>
-                    <a href="/news_like/{{ item.id }}/{{ current_user.id }}" class="btn btn-success">нравится</a>
+                    <a href="/news/{{ item.id }}" class="btn btn-warning">Изменить</a>
+                    <a href="/news_delete/{{ item.id }}" class="btn btn-danger">Удалить</a>
                 </div>
             {% endif %}
-        {% endif %}
-    </div>
+
+            {% if current_user.is_authenticated and current_user != item.user %}
+                <p>{{ current_user.liked_news.split() }}</p>
+                {% set a = item.id %}
+                {% set b = a | string %}
+                {% if b in current_user.liked_news.split() %}
+                    <p>это нравится</p>
+                    <div>
+                        <a href="/dislike/{{ item.id }}/{{ current_user.id }}" class="btn btn-warning">убрать из понравившихся</a>
+                    </div>
+                    {% else %}
+                    <div>
+                        <a href="/news_like/{{ item.id }}/{{ current_user.id }}" class="btn btn-success">нравится</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    {% endif %}
 {% endfor %}
 {% endblock %}

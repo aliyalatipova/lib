@@ -137,11 +137,6 @@ def my_news():
     return render_template("my_news.html", news=news)
 
 
-# пока возвращает только номер айдишника пользователяж
-# @app.route('/news_liked_by/<int:id_user>', methods=['GET', 'POST'])
-# def news_liked_by(id_user):
-    # return str(id_user)
-
 @app.route('/news_liked_by/<int:id_user>', methods=['GET', 'POST'])
 def news_liked_by(id_user):
     db_sess = db_session.create_session()
@@ -181,14 +176,30 @@ def edit_news(id):
     return render_template('news.html', title='Редактирование новости', form=form)
 
 
-@app.route("/")
+@app.route("/", methods=['GET', 'POST'])
 def index():
     db_sess = db_session.create_session()
     # if current_user.is_authenticated:
-        # news = db_sess.query(News).filter((News.user == current_user))
+    # news = db_sess.query(News).filter((News.user == current_user))
     # else:
     news = db_sess.query(News)
-    return render_template("index.html", news=news)
+
+    if request.method == 'POST':
+         # Передайте значение имени соответствующего поля ввода формы
+        # year = request.form.get('year')
+        find = request.form.get('find1')
+        print(find)
+        news_need = list()
+        for n in news:
+            if find in n.title:
+                print(n.title)
+                news_need.append(n.id)
+        print(news_need)
+    else:
+        news_need = [n.id for n in news]
+
+
+    return render_template("index.html", news=news, news_need=news_need)
 
 
 # чтож будет попытка
