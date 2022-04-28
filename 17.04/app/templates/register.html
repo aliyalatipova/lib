@@ -13,6 +13,20 @@
             </p>
         {% endfor %}
     </p>
+    <!-- вариантик как можно было бы написать -->
+    <!--<p>Телефон в формате +7xxxxxxxx:  <input type="tel" name="tel" placeholder="+71234567890"
+   pattern="+7[0-9]{10}"></p> -->
+
+    <p>
+        {{ form.number.label }}<br>
+        {{ form.number(class="form-control") }}<br>
+        {% for error in form.number.errors %}
+            <p class="alert alert-danger" role="alert">
+                {{ error }}
+            </p>
+        {% endfor %}
+    </p>
+
     <p>
         {{ form.password.label }}<br>
         {{ form.password(class="form-control", type="password") }}<br>

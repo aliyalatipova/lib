@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, request, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
+from waitress import serve
 from forms.news import NewsForm
 from forms.user import RegisterForm, LoginForm
 from data.news import News
@@ -45,14 +46,15 @@ def add_news():
         db_sess.merge(current_user)
         db_sess.commit()
         return redirect('/')
-    return render_template('news.html', title='Добавление новости', form=form)
+    return render_template('news.html', title='Создание нового объявления', form=form)
 
 
-@app.route('/news_delete/<int:id>', methods=['GET', 'POST'])
+# удаление новости
+@app.route('/news_delete/<int:id_news>', methods=['GET', 'POST'])
 @login_required
-def news_delete(id):
+def news_delete(id_news):
     db_sess = db_session.create_session()
-    news = db_sess.query(News).filter(News.id == id, News.user == current_user).first()
+    news = db_sess.query(News).filter(News.id == id_news, News.user == current_user).first()
     if news:
         db_sess.delete(news)
         db_sess.commit()
@@ -61,7 +63,8 @@ def news_delete(id):
     return redirect('/')
 
 
-# добавляет в столбец бд, на самом деле нет(
+# лайкать объявление
+# добавляет в столбец бд
 @app.route('/news_like/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
 @login_required
 def news_like(id_news, id_user):
@@ -90,7 +93,7 @@ def dislike(id_news, id_user):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id_user).first()
     if user:
-        print(type(user.liked_news))
+        # print(type(user.liked_news))
         # return str(user.liked_news)
         if str(id_news) in user.liked_news.split():
             another = list()
@@ -98,7 +101,7 @@ def dislike(id_news, id_user):
                 if new != str(id_news):
                     another.append(new)
             user.liked_news = ' '.join(another)
-        print('l', user.liked_news)
+        # print('l', user.liked_news)
         db_sess.commit()
         return redirect("/")
     else:
@@ -106,7 +109,7 @@ def dislike(id_news, id_user):
         return redirect("/")
 
 
-# дизлайкать если человек находился в понравившихся
+# дизлайкать если человек находился в отделе понравившихся
 @app.route('/dislike_from/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
 @login_required
 def dislike_from(id_news, id_user):
@@ -114,7 +117,7 @@ def dislike_from(id_news, id_user):
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id_user).first()
     if user:
-        print(type(user.liked_news))
+        # print(type(user.liked_news))
         # return str(user.liked_news)
         if str(id_news) in user.liked_news.split():
             another = list()
@@ -124,12 +127,13 @@ def dislike_from(id_news, id_user):
             user.liked_news = ' '.join(another)
         print('l', user.liked_news)
         db_sess.commit()
-        return redirect(f"/news_liked_by/{id_user}")
+
     else:
         abort(404)
-        return redirect("/")
+    return redirect(f"/news_liked_by/{id_user}")
 
 
+# только мои новостил
 @app.route('/my_news1', methods=['GET', 'POST'])
 def my_news():
     db_sess = db_session.create_session()
@@ -185,35 +189,19 @@ def index():
     news = db_sess.query(News)
 
     if request.method == 'POST':
-         # Передайте значение имени соответствующего поля ввода формы
-        # year = request.form.get('year')
         find = request.form.get('find1')
+        max_price = request.form.get('max')
         print(find)
         news_need = list()
         for n in news:
             if find in n.title:
-                print(n.title)
-                news_need.append(n.id)
+                if n.price <= int(max_price):
+                    print(n.title)
+                    news_need.append(n.id)
         print(news_need)
     else:
         news_need = [n.id for n in news]
-
-
     return render_template("index.html", news=news, news_need=news_need)
-
-
-# чтож будет попытка
-# @app.route("/authorized/<int:id_user>", methods=['GET', 'POST'])
-# def authorized(id_user):
-    #db_sess = db_session.create_session()
-    #news = db_sess.query(News)
-    #user = db_sess.query(User).filter(User.id == id_user).first()
-    #liked = user.liked_news
-    #print(liked)
-    #liked_list = liked.split()
-    #liked_list = [int(x) for x in liked_list]
-    # print(liked_list)
-    #return render_template("authorized.html", news=news)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -229,7 +217,8 @@ def reqister():
                                    message="Такой пользователь уже есть")
         user = User(
             name=form.name.data,
-            email=form.email.data
+            email=form.email.data,
+            number=form.number.data
         )
         user.set_password(form.password.data)
         db_sess.add(user)
