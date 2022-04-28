@@ -41,13 +41,13 @@
                 {% set a = item.id %}
                 {% set b = a | string %}
                 {% if b in current_user.liked_news.split() %}
-                    <p>это нравится</p>
+                    <p>это нравится&#9825;</p>
                     <div>
-                        <a href="/dislike/{{ item.id }}/{{ current_user.id }}" class="btn btn-warning">убрать из понравившихся</a>
+                        <a href="/dislike/{{ item.id }}/{{ current_user.id }}" class="btn btn-warning">&#10084;</a>
                     </div>
                     {% else %}
                     <div>
-                        <a href="/news_like/{{ item.id }}/{{ current_user.id }}" class="btn btn-success">нравится</a>
+                        <a href="/news_like/{{ item.id }}/{{ current_user.id }}" class="btn btn-success">&#128420;</a>
                     </div>
                 {% endif %}
             {% endif %}
