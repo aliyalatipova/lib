@@ -85,6 +85,28 @@ def news_like(id_news, id_user):
         return redirect("/")
 
 
+# id новости добавляет
+# добавляет в столбец бд
+@app.route('/know_num/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
+@login_required
+def know_num(id_news, id_user):
+    # print(id_news, id_user)
+    db_sess = db_session.create_session()
+    user = db_sess.query(User).filter(User.id == id_user).first()
+    if user:
+        print(type(user.know_num))
+        # return str(user.liked_news)
+        if user.know_num.split()[-1] != str(id_news):
+            user.know_num = user.know_num + ' ' + str(id_news)
+        print('nu', user.know_num)
+        db_sess.commit()
+        user_id = user.id
+        return redirect(f"/news_liked_by/{id_user}")
+    else:
+        abort(404)
+        return redirect(f"/news_liked_by/{id_user}")
+
+
 # как дизлайкать
 @app.route('/dislike/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
 @login_required
@@ -202,10 +224,10 @@ def index():
         print(news_need)
     else:
         news_need = [n.id for n in news]
-    a = [1 for n in news_need]
+    # a = [1 for n in news_need]
     # вот эта переменная это количество строк чтобы по нормаьному распределить новости
-    p_f_l = len(a) // 3 + 1
-    return render_template("index.html", news=news, news_need=news_need, p_f_l=p_f_l)
+    # p_f_l = len(a) // 3 + 1
+    return render_template("index.html", news=news, news_need=news_need)
 
 
 @app.route('/register', methods=['GET', 'POST'])
