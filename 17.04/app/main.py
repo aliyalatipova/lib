@@ -188,6 +188,7 @@ def index():
     # else:
     news = db_sess.query(News)
 
+
     if request.method == 'POST':
         find = request.form.get('find1')
         max_price = request.form.get('max')
@@ -201,7 +202,10 @@ def index():
         print(news_need)
     else:
         news_need = [n.id for n in news]
-    return render_template("index.html", news=news, news_need=news_need)
+    a = [1 for n in news_need]
+    # вот эта переменная это количество строк чтобы по нормаьному распределить новости
+    p_f_l = len(a) // 3 + 1
+    return render_template("index.html", news=news, news_need=news_need, p_f_l=p_f_l)
 
 
 @app.route('/register', methods=['GET', 'POST'])
