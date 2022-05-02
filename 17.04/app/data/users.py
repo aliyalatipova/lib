@@ -17,7 +17,7 @@ class User(SqlAlchemyBase, UserMixin):
     created_date = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now)
     liked_news = sqlalchemy.Column(sqlalchemy.String, default='111')
     number = sqlalchemy.Column(sqlalchemy.String)
-    # типа строка в которой id объявлений, у которых юзер знает номер телефона автора объяв
+    # строка в которой id объявлений, у которых юзер знает номер телефона автора объяв
     know_num = sqlalchemy.Column(sqlalchemy.String, default='111')
 
     news = orm.relation("News", back_populates='user')

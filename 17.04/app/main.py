@@ -1,12 +1,13 @@
 from flask import Flask, render_template, redirect, request, abort
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
-from waitress import serve
+# from waitress import serve
 from forms.news import NewsForm
 from forms.user import RegisterForm, LoginForm
 from data.news import News
 from data.users import User
 from data import db_session
+
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -78,7 +79,7 @@ def news_like(id_news, id_user):
             user.liked_news = user.liked_news + ' ' + str(id_news)
         print('l', user.liked_news)
         db_sess.commit()
-        user_id = user.id
+
         return redirect("/")
     else:
         abort(404)
@@ -100,7 +101,7 @@ def know_num(id_news, id_user):
             user.know_num = user.know_num + ' ' + str(id_news)
         print('nu', user.know_num)
         db_sess.commit()
-        user_id = user.id
+
         return redirect(f"/news_liked_by/{id_user}")
     else:
         abort(404)
@@ -176,13 +177,13 @@ def news_liked_by(id_user):
     return render_template("liked_news.html", liked_list=liked_list, news=news)
 
 
-@app.route('/news/<int:id>', methods=['GET', 'POST'])
+@app.route('/news/<int:id_user>', methods=['GET', 'POST'])
 @login_required
-def edit_news(id):
+def edit_news(id_user):
     form = NewsForm()
     if request.method == "GET":
         db_sess = db_session.create_session()
-        news = db_sess.query(News).filter(News.id == id, News.user == current_user).first()
+        news = db_sess.query(News).filter(News.id == id_user, News.user == current_user).first()
         if news:
             form.title.data = news.title
             form.content.data = news.content
@@ -191,7 +192,7 @@ def edit_news(id):
             abort(404)
     if form.validate_on_submit():
         db_sess = db_session.create_session()
-        news = db_sess.query(News).filter(News.id == id, News.user == current_user).first()
+        news = db_sess.query(News).filter(News.id == id_user, News.user == current_user).first()
         if news:
             news.title = form.title.data
             news.content = form.content.data
@@ -209,7 +210,6 @@ def index():
     # news = db_sess.query(News).filter((News.user == current_user))
     # else:
     news = db_sess.query(News)
-
 
     if request.method == 'POST':
         find = request.form.get('find1')
