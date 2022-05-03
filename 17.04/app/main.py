@@ -91,7 +91,6 @@ def news_like(id_news, id_user):
 @app.route('/know_num/<int:id_news>/<int:id_user>', methods=['GET', 'POST'])
 @login_required
 def know_num(id_news, id_user):
-    # print(id_news, id_user)
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == id_user).first()
     if user:
@@ -170,10 +169,8 @@ def news_liked_by(id_user):
     news = db_sess.query(News)
     user = db_sess.query(User).filter(User.id == id_user).first()
     liked = user.liked_news
-    print(liked)
     liked_list = liked.split()
     liked_list = [int(x) for x in liked_list]
-    print(liked_list)
     return render_template("liked_news.html", liked_list=liked_list, news=news)
 
 
