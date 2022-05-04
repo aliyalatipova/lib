@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for item in news %}
+       {% if item.id in liked_list %}
+            <div class="mid">
+                <h2>{{ item.title }}</h2>
+                <div>
+                <img src="{{ item.img_href }}"></p>
+            </div>
+                <div>
+                    {{ item.content }}
+                </div>
+                <div>
+                    Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
+                </div>
+                <div>
+                Город - {{ item.city }}
+            </div>
+                <div>
+                    <a href="/news_liked_by/{{ current_user.id }}"><a href="/dislike/{{ item.id }}/{{ current_user.id }}" class="btn btn-dark">&#10084;</a></a>
+                </div>
+            </div>
+       {% endif %}
+
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block content %}
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Поиск</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+    </ul>
+        <form class="form-inline my-2 my-lg-0" method="post">
+            <input class="form-control mr-sm-2" type="search" name="find2" placeholder="Казань" aria-label="Search" autocomplete="off" required>
+        </form>
+    <form class="form-inline my-2 my-lg-0" method="post">
+      <input class="form-control mr-sm-2" type="search" name="find1" placeholder="Поиск" aria-label="Search" autocomplete="off" required>
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Поиск</button>
+    </form>
+  </div>
+    </nav>
+<br>
+{% for item in news %}
+    {% if item.id in news_need %}
+        <div class="mid">
+            <h2>{{ item.title }}</h2>
+            <div>
+                <p><img src="{{ item.img_href }}" alt=" здесь должна была быть картинка, но не нашлась"></p>
+            </div>
+            <h3>{{ item.price }}</h3>
+            <div>
+                {{ item.content }}
+            </div>
+
+            <div>
+                автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
+            </div>
+            <div>
+                Город - {{ item.city }}
+            </div>
+
+            {% if current_user.is_authenticated and current_user == item.user %}
+                <div>
+                    <a href="/news/{{ item.id }}" class="btn btn-warning">Изменить</a>
+                    <a href="/news_delete/{{ item.id }}" class="btn btn-danger">Удалить</a>
+                </div>
+            {% endif %}
+
+            {% if current_user.is_authenticated and current_user != item.user %}
+                {% set a = item.id %}
+                {% set b = a | string %}
+                {% if b in current_user.liked_news.split() %}
+
+                    <div>
+                        <a href="/dislike/{{ item.id }}/{{ current_user.id }}" class="btn btn-dark">&#10084;</a>
+                    </div>
+                    {% else %}
+                    <div>
+                        <a href="/news_like/{{ item.id }}/{{ current_user.id }}" class="btn btn-dark">🤍</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+        <br></div><br>
+    {% endif %}
+{% endfor %}
+{% endblock %}

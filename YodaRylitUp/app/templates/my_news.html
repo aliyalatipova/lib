@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% for item in news %}
+
+
+            {% if current_user.is_authenticated and current_user == item.user %}
+                <div>
+                    <div class="mid">
+            <h2>{{ item.title }}</h2>
+                        <div>
+                <img src="{{ item.img_href }}"></p>
+            </div>
+            <div>
+                {{ item.content }}
+            </div>
+            <div>
+                Автор - {{ item.user.name }}, Дата написания - {{ item.created_date }}
+            </div>
+                        <div>
+                Город - {{ item.city }}
+            </div>
+                    <a href="/news/{{ item.id }}" class="btn btn-warning">Изменить</a>
+                    <a href="/news_delete/{{ item.id }}" class="btn btn-danger">Удалить</a>
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% endblock %}
