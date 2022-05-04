@@ -223,7 +223,7 @@ def reqister():
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
-        return redirect('/')
+        return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
 
 
